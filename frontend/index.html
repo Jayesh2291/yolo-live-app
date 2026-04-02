@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <body>
+
 <h2>YOLO Live Detection</h2>
 
 <input type="file" id="fileInput">
@@ -10,17 +11,30 @@
 
 <script>
 async function upload() {
-    let file = document.getElementById("fileInput").files[0];
+    let fileInput = document.getElementById("fileInput");
+
+    if (fileInput.files.length === 0) {
+        alert("Please select a file");
+        return;
+    }
+
+    let file = fileInput.files[0];
     let formData = new FormData();
     formData.append("file", file);
 
-    let res = await fetch("http://127.0.0.1:8000/detect", {
-        method: "POST",
-        body: formData
-    });
+    try {
+        let res = await fetch("https://object-recognition-fiwg.onrender.com/detect", {
+            method: "POST",
+            body: formData
+        });
 
-    let data = await res.json();
-    document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+        let data = await res.json();
+        document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+
+    } catch (error) {
+        console.error(error);
+        alert("Error connecting to backend");
+    }
 }
 </script>
 
